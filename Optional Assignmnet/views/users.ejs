@@ -1,0 +1,13 @@
+<%- include("partials/header.ejs") %>
+    <h1>Users</h1>
+    <% if (users.length > 0) { %>
+        <ul>
+            <% users.forEach((user) => { %>
+                <li><%=user.username%></li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <h1>No users Found</h1>
+    <% } %>
+    </body>
+</html>
