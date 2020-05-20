@@ -1,0 +1,19 @@
+const express = require('express');
+const app = express();
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+
+//express.urlencoded or bodyParser.urlencoded
+app.use(express.urlencoded({extended: true}))
+
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
+
+// Catch error website, use app.use to catch all type of request
+app.use('/', (req,res) => {
+    res.status(404).send('<h1>Page not found</h1>');
+})
+
+app.listen(3000);
+
