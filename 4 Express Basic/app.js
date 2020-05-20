@@ -5,10 +5,11 @@ const app = express();
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-
 //express.urlencoded or bodyParser.urlencoded
 app.use(express.urlencoded({extended: true}))
 
+// built in middleware that serve static files
+app.use(express.static(path.join(rootDir, 'public')));
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
