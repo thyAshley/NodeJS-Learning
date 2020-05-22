@@ -1,5 +1,3 @@
-let data = [{item: 'Eat the food'}, {item: 'drink the milk'}, {item: 'walk dog'}];
-
 const mongoose = require('mongoose');
 require('dotenv').config()
 
@@ -17,24 +15,23 @@ const Todo = mongoose.model('Todo', schema=todoSchema);
 module.exports = function(app) {
 
     app.get('/todo', (req,res) => {
-        Todo.find((err , result) => {
-            if (err) console.log(err);
-            else {
-                res.render('todo', {todos: result})
-            }
-            
+        Todo.find({}, (err , result) => {
+            if (err) throw err;
+            res.render('todo', {todos: result})
+            })
         });
-    })
     
     app.post('/todo', (req,res) => {
-        const newItem = Todo(req.body).save((err) => {
-            if (err) console.log(err);
-            console.log('item')
+        const newItem = Todo(req.body).save((err, data) => {
+            if (err) throw err;
             res.redirect('/todo');
         });
     })
 
     app.get('/todo/delete/:item', (req,res) => {
-        res.redirect('/todo');  
+        Todo.find({item: req.params.item}).deleteOne((err, data) => {
+            if (err) throw err;
+            res.redirect('/todo');  
+        });
     })
 }
