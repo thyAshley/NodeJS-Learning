@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <h1>My Todo List</h1>
+    <div id="todo-table">
+        <form action="/todo" method="POST">
+            <input type="text" name="item" placeholder="Add New item..." required>
+            <button type="submit">Add item</button>
+        </form>
+        <ul>
+            <% todos.forEach((data) => { %>
+                <li><a href="/todo/delete/<%=data.item%>"><%= data.item %></a></li>
+            <% }) %>
+        </ul>
+    </div>
+
+    
+</body>
+</html>
