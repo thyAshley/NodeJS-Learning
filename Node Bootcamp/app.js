@@ -39,8 +39,8 @@ app.get('/api/v1/tours/:id?', (req, res) => {
 })
 
 app.post('/api/v1/tours', (req, res) => {
-    const postID = tours.length;
-    const newTour = {id: postID, ...req.body};
+    const newID = tours.length;
+    const newTour = {id: newID, ...req.body};
     tours.push(newTour);
     fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
         res.status(201).json({
@@ -53,8 +53,28 @@ app.post('/api/v1/tours', (req, res) => {
 })
 
 app.patch('/api/v1/tours/:id', (req, res) => {
-    const postID = 
+    const postID = req.params.id;
+    res.status(200).json(
+        {
+            status: 'success',
+            data: {
+                tour: '<Updated Tour>'
+            }
+        }
+    )
 })
+
+app.delete('/api/v1/tours/:id', (req, res) => {
+    const postID = req.params.id;
+    res.status(204).json(
+        {
+            status: 'success',
+            data: null
+        }
+    )
+})
+
+
 app.listen(port, () => {
     console.log(`server started at on port ${port}`);
 })
