@@ -10,7 +10,7 @@ const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simpl
 
 app.use(express.json());
 
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => {
     res.status(200).json({
         status: 200,
         results: tours.length,
@@ -18,9 +18,9 @@ app.get('/api/v1/tours', (req, res) => {
             tours
         }
     });
-})
+}
 
-app.get('/api/v1/tours/:id?', (req, res) => {
+const getTour = (req, res) => {
     const tourId = +req.params.id;
     const tour = tours.find((tour) => {
         return tour.id === tourId;
@@ -36,9 +36,9 @@ app.get('/api/v1/tours/:id?', (req, res) => {
             message: 'Invalid ID'
         })
     }
-})
+}
 
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
     const newID = tours.length;
     const newTour = {id: newID, ...req.body};
     tours.push(newTour);
@@ -50,9 +50,9 @@ app.post('/api/v1/tours', (req, res) => {
             }
         })
     })
-})
+}
 
-app.patch('/api/v1/tours/:id', (req, res) => {
+const updateTour = (req, res) => {
     const postID = req.params.id;
     res.status(200).json(
         {
@@ -62,17 +62,23 @@ app.patch('/api/v1/tours/:id', (req, res) => {
             }
         }
     )
-})
+}
 
-app.delete('/api/v1/tours/:id', (req, res) => {
-    const postID = req.params.id;
-    res.status(204).json(
-        {
-            status: 'success',
-            data: null
-        }
-    )
-})
+const deleteTour = (req, res) => {
+    console.log('ok')
+    res.status(204).json({
+        status: 'ok'
+    })
+}
+
+app.route('/api/v1/tours')
+.get(getAllTours)
+.post(createTour)
+
+app.route('/api/v1/tours/:id')
+.get(getTour)
+.patch(updateTour)
+.delete(deleteTour)
 
 
 app.listen(port, () => {
