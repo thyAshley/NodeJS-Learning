@@ -11,16 +11,6 @@ app.use(express.json());
 
 app.use(morgan('dev'));
 
-app.use((req, res, next) => {
-    console.log('hello from middleware');
-    next();
-})
-
-app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString();
-    next();
-})
-
 // -- Routes --
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
