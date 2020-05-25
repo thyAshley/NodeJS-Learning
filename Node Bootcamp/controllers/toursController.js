@@ -48,7 +48,7 @@ exports.getTour = async (req, res) => {
     } catch (err) {
         res.send(404).json({
             status: 'failure',
-            message: 'id cannot be found'
+            message: err
         })
     }
 }
