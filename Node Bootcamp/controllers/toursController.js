@@ -3,40 +3,54 @@ const fs = require('fs');
 const Tour = require('../models/tourModel');
 
 
-exports.getAllTours = (req, res) => {
-    Tour.find({}, (err, data) => {
+exports.getAllTours = async (req, res) => {
+    try {
+        const tours = await Tour.find({})
         res.status(200).json(
             {
                 status: 'success',
-                data: data
+                results: tours.length,
+                data: tours
             });
-    })
+    } catch (err) {
+        res.status(400).json({
+            status: 'failure',
+            message: err
+        })
+    }
+    
 }
 
-exports.createTour = (req, res) => {
+exports.createTour = async (req, res) => {
     
-    console.log(req);
-    const newTour = new Tour({
-        name: req.body.name,
-        rating: req.body.rating,
-        price: req.body.price
-    });
-    console.log(newTour);
-    newTour.save().then(() => {
+    try {
+        const newTour = await Tour.create(req.body);
         res.status(201).json({
             status: 'success',
             data: newTour
         })
-    }).catch(err => {
-        res.status(404).json({
+    } catch (err) {
+        res.status(400).json({
             status: 'failure',
             message: err
         })
-    })
+    }
 }
 
-exports.getTour = (req, res) => {
-    
+exports.getTour = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const tour = await Tour.findById(id);
+        res.status(200).json({
+            status: 'success', 
+            data: tour
+        })
+    } catch (err) {
+        res.send(404).json({
+            status: 'failure',
+            message: 'id cannot be found'
+        })
+    }
 }
 
 exports.updateTour = (req, res) => {
