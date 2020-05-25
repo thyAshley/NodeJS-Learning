@@ -1,3 +1,6 @@
+// use --import to import all data from tours-simple.json
+// use --delete to clear all data from mongodb
+
 const fs = require('fs');
 const mongoose = require('mongoose');
 require('dotenv').config({path: `./config.env`})
@@ -24,6 +27,8 @@ const importData = async () => {
         console.log('Data successfully loaded!');
     } catch (err) {
         console.log(err);
+    } finally {
+        process.exit();
     }
 }
 
@@ -34,6 +39,8 @@ const deleteData = async () => {
         console.log('Data successfully deleted!');
     } catch (err) {
         console.log(err);
+    } finally {
+        process.exit();
     }
 }
 if (process.argv[2] === '--import') importData();
