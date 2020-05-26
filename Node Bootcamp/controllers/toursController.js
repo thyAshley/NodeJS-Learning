@@ -2,6 +2,12 @@ const fs = require('fs');
 
 const Tour = require('../models/tourModel');
 
+exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingAverage,price';
+    req.query.fields='name,price,ratingAverage,difficulty';
+    next();
+};
 
 exports.getAllTours = async (req, res) => {
     try {
@@ -95,7 +101,7 @@ exports.getTour = async (req, res) => {
             data: tour
         })
     } catch (err) {
-        res.send(404).json({
+        res.status(404).json({
             status: 'failure',
             message: err
         })
