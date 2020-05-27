@@ -72,13 +72,19 @@ tourSchema.virtual('durationInWeeks')
 // Query Middleware
 tourSchema.pre(/^find/, function(next) { 
     this.find({secretTour: { $ne: true }});
-    this.select(['-secretTour']);
     this.startQuery = Date.now();
     next();
 });
 
 tourSchema.post(/^find/, function(doc, next) {
     console.log(Date.now() - this.startQuery, 'milliseconds');
+    next();
+})
+
+// Aggregation Middleware
+tourSchema.pre('aggregate', function(next) {
+    this.pipeline().unshift({ '$match': { secretTour: { $ne: true } } })
+    console.log(this.pipeline());
     next();
 })
 // Document Middleware
