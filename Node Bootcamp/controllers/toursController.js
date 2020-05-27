@@ -16,7 +16,11 @@ exports.getAllTours = async (req, res) => {
     console.log(req.query);
     try {
         // execute query
-        const features = new APIFeatures(Tour, req.query).filter().sort().limitField().paginate();
+        const features = new APIFeatures(Tour, req.query)
+        .filter()
+        .sort()
+        .limitField()
+        .paginate();
         const tours = await features.query;
         // send response
         res.status(200).json(
@@ -70,7 +74,8 @@ exports.updateTour = async (req, res) => {
     const id = req.params.id;
     try {
         const tour = await Tour.findByIdAndUpdate(id, req.body, {
-            new: true
+            new: true,
+            runValidators: true
         })
         res.status(200).json({
             status: 'success',
