@@ -7,8 +7,9 @@ const userController = require('../controllers/userController');
 const authController = require('../controllers/authenticationController');
 
 router.post('/signup', authController.signup);
+router.post('/login', authController.login);
 
-router.route('/')
+router.route('/t')
 .get(userController.getAllUsers)
 .post(userController.createUser);
 

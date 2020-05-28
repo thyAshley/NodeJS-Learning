@@ -18,8 +18,8 @@ const userRouter = require('./routes/userRoutes');
 const globalErrorHandler = require('./controllers/errorController')
 
 // -- Routes --
-app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/tours', tourRouter);
 
 app.all('*', (req, res, next) => {
     const err = new AppError(`Can't find ${req.url} on this server`, 404);

@@ -4,6 +4,14 @@ const catchAsync = require('../utils/catchAsync')
 
 const jwt = require('jsonwebtoken');
 
+const AppError = require('../utils/appError');
+
+const createToken = (userid) => {
+    return jwt.sign({ id: userid }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN
+    })
+}
+
 exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
         name: req.body.name,
@@ -12,9 +20,8 @@ exports.signup = catchAsync(async (req, res, next) => {
         passwordConfirm: req.body.passwordConfirm
     });
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN
-    });
+    const token = createToken(newUser._id)
+
     res.status(201).json({
         status: 'success',
         token: token,
@@ -23,3 +30,27 @@ exports.signup = catchAsync(async (req, res, next) => {
         }
     });
 });
+
+exports.login = catchAsync(async (req, res, next) => {
+    const { email, password } = req.body;
+    
+    console.log(email);
+    // 1) check email and password exist
+    if (!(email && password)) {
+        next(new AppError('Please provide email and password',400))
+    }
+    // 2) check if user exist and password is correct
+    const user = await User.findOne({email: email}).select('password');
+    if (!user || !await user.correctPassword(password, user.password)) {
+
+        return next(new AppError('Incorrect Credentials', 401))
+        }
+
+    const token = createToken(user._id)
+    res.status(200).json({
+        status: 'success',
+        token: token,
+        message: 'Login in successfully'
+    
+    })
+})
