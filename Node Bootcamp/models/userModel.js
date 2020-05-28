@@ -54,6 +54,10 @@ userSchema.methods.correctPassword = async function(candidatePassword, userPassw
     return await bcrypt.compare(candidatePassword, userPassword);
 }
 
+userSchema.methods.changePassword = async function(JWTTimestamp) {
+    return false;
+}
+
 const User = mongoose.model('user', schema=userSchema);
 
 module.exports = User;

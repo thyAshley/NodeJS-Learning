@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 
 const AppError = require('../utils/appError');
 
+const { promisify } = require('util');
+
 const createToken = (userid) => {
     return jwt.sign({ id: userid }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
@@ -66,9 +68,11 @@ exports.protect = catchAsync(async (req, res, next) => {
         return next(new AppError('You are not logged in, please log in to get access', 401))
     }
     // 2) Verify token
+    const payload = await jwt.verify(token, process.env.JWT_SECRET)
 
     // 3) Check is user still exists
-
+    const user = await User.findById(payload.id);
+    if (!user) return next(new AppError('The user no longer exist', 401));
     // 4) Check if user changed password after JWT was issued
 
     next();
