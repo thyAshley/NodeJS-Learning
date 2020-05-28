@@ -74,6 +74,9 @@ exports.protect = catchAsync(async (req, res, next) => {
     const user = await User.findById(payload.id);
     if (!user) return next(new AppError('The user no longer exist', 401));
     // 4) Check if user changed password after JWT was issued
+    if (user.changePassword(payload.iat)) return next(new AppError('User recently changed password. Please re-log', 401));
 
+
+    // give access
     next();
 })
