@@ -23,7 +23,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     });
 
     const token = createToken(newUser._id)
-
+    
     res.status(201).json({
         status: 'success',
         token: token,
@@ -76,7 +76,17 @@ exports.protect = catchAsync(async (req, res, next) => {
     // 4) Check if user changed password after JWT was issued
     if (user.changePassword(payload.iat)) return next(new AppError('User recently changed password. Please re-log', 401));
 
-
+    req.user = user;
     // give access
     next();
 })
+
+exports.restrictTo = (...role) => {
+    return (req, res, next) => {
+        console.log(role , req.user);
+        if (!role.includes(req.user.role)) {
+            return next(new AppError('You do not have permission to perform this action', 403));
+        }
+        next();
+    };
+};
