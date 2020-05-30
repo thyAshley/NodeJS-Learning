@@ -31,7 +31,7 @@ mongoose.connect(DB,
         useUnifiedTopology: true,
         useCreateIndex: true
     })
-.then(() => console.log('db connected succesfully'))
+.then(() => console.log('db connected succesfully'));
 
 
 // -- Start Server --
