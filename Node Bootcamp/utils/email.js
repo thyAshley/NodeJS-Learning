@@ -1,8 +1,8 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = (options) => {
+const sendEmail = async (options) => {
     // 1) Transporter
-    const transport = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
         auth: {
@@ -11,6 +11,17 @@ const sendEmail = (options) => {
         }
       });
     // 2 Define the email options
+    const mailOption = {
+        from: 'Dev-Team <dev@natours.io>',
+        to: options.email,
+        subject: options.subject,
+        text: options.message,
+        //html: 
+    }
 
     // 3) Send email with nodemailer
+
+    await transporter.sendMail(mailOption);
 }
+
+module.exports = sendEmail;

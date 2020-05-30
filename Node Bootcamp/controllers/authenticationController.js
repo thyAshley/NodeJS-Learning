@@ -8,6 +8,8 @@ const AppError = require('../utils/appError');
 
 const { promisify } = require('util');
 
+const sendEmail = require('../utils/email');
+
 const createToken = (userid) => {
     return jwt.sign({ id: userid }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
@@ -97,10 +99,20 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return next(new AppError('There is no user with that email address', 404));
 
-    // // 2) Generate User Token
+    // 2) Generate User Token
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
+    // 3) Send user email
+    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/resetPassword/${resetToken}`;
+
+    const message = `Forgot your password? Submit a password reset with your new password to: ${resetURL}.\nIf you did not send this request, please ignore this email`;
+
+    await sendEmail({
+        email: user.email,
+        subject: 'Password Reset Request.',
+        text: message
+    })
 })
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
