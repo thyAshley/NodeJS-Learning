@@ -13,13 +13,20 @@ const createToken = (userid) => {
 }
 
 const createSendToken = (user, statusCode, token, res) => {
+    const cookieOptions = {
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+        httpOnly: true
+    };
+    if (process.env.MODE === 'production') cookieOptions.secure = true;
+
+    user.password = undefined;
     res.status(statusCode).json({
         status: 'success',
         token: token,
         data: {
             user: user
         }
-    });
+    }).cookie('jwt', token, cookieOptions);
 }
 
 exports.signup = catchAsync(async (req, res, next) => {
