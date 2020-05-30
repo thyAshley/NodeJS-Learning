@@ -1,15 +1,9 @@
 const User = require('../models/userModel');
-
 const catchAsync = require('../utils/catchAsync')
-
 const jwt = require('jsonwebtoken');
-
 const AppError = require('../utils/appError');
-
 const { promisify } = require('util');
-
 const sendEmail = require('../utils/email');
-
 const crypto = require('crypto');
 
 const createToken = (userid) => {
@@ -165,6 +159,30 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.updatePassword = (req, res, next) => {
+exports.updatePassword = async (req, res, next) => {
+    // 1) Get user from collection,
+    const currentToken = req.headers.authorization.split(' ')[1];
+    const tokenDetails = await jwt.verify(currentToken, process.env.JWT_SECRET);
+    const user = await User.findById(tokenDetails.id).select('password');
+
+    if (!user) return next(new AppError('Invalid user, login and try again'), 401);
+
+    const result = await user.correctPassword(req.body.password, user.password);
+
+    if (!result) return next(new AppError('Invalid Password, please try again'), 401);
     
+
+    // 3) if password is correct, update password
+    user.password = req.body.newPassword;
+    user.save();
+
+    // 4) log user in again
+    const newToken = createToken(user._id);
+
+    res.status(200).json({
+        status: 'success',
+        token: newToken,
+        message: 'Login in successfully'
+    
+    })
 }
