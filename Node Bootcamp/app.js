@@ -26,7 +26,9 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // HPP prevention middleware
-app.use(hpp());
+app.use(hpp({
+    whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'difficulty', 'price', 'maxGroupSize']
+}));
 
 // Test Middleware
 app.use((req,res, next) => {

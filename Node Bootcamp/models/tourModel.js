@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const slugify = require('slugify');
 
+const User = require('./userModel');
+
 const tourSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -80,7 +82,37 @@ const tourSchema = new mongoose.Schema({
     secretTour: {
         type: Boolean,
         default: false
-    }
+    },
+    startLocation: {
+        type: {
+            type: String,
+            default: 'Point',
+            enum: {
+                values: ['Point'],
+                message: 'Value can only be Point'
+            }
+        },
+        coordinates: [Number],
+        address: String,
+        description: String
+    },
+    locations: [
+        {
+            type: {
+                type: String,
+                default: 'Point',
+                enum: {
+                    values: ['Point'],
+                    message: 'Value can only be Point'
+                }
+            },
+            coordinates: [Number],
+            address: String,
+            description: String,
+            day: Number
+        }
+    ],
+    guides: Array
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -109,12 +141,20 @@ tourSchema.pre('aggregate', function(next) {
     console.log(this.pipeline());
     next();
 });
+
 // Document Middleware
 tourSchema.pre('save', function(next) {
     this.slug = slugify(this.name, { lower: true });
     next();
 });
 
+tourSchema.pre('save', async function(next) {
+    const guidesPromises = this.guides.map(async id => {
+        return await User.findById(id);
+    })
+    this.guides = await Promise.all(guidesPromises);
+
+})
 
 const Tour = mongoose.model('Tour', schema=tourSchema);
 
