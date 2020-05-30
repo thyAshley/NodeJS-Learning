@@ -19,10 +19,11 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 })
 
 exports.updateMe = catchAsync(async(req, res, next) => {
+
     // 1) error if post password
     if (req.body.password || req.body.confirmPassword) return next(new AppError('This is not for password updating, please use the /updatePassword route instead'), 400)
 
-    // 2) update user document
+    // 2) update user document after filtering unwanted fields
     const filteredBody = filterObj(req.body, 'name', 'email');
     const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
         new: true,
@@ -35,6 +36,15 @@ exports.updateMe = catchAsync(async(req, res, next) => {
     
 })
 
+exports.deleteMe = catchAsync(async (req, res, next) => {
+    await User.findByIdAndUpdate( req.user.id, { active: false } );
+    
+    res.status(204).json({
+        status: 'success',
+        data: null
+    })
+    
+})
 exports.createUser = (req, res) => {
     res.status(500).json({
         status: 'error',
