@@ -1,15 +1,16 @@
 const express = require('express');
-
 const morgan = require('morgan');
-
 const rateLimit = require('express-rate-limit');
-
+const helmet = require('helmet');
 const AppError = require('./utils/appError');
 
 const app = express();
 
 // -- Global Middlewares --
-app.use(express.json());
+// Set secure HTTP headers
+app.use(helmet());
+// Body Parser, reading data from body to req.body
+app.use(express.json({ limit: '10kb' }));
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req,res, next) => {
@@ -17,10 +18,11 @@ app.use((req,res, next) => {
     next();
 })
 
-
+// Development Logging
 if (process.env.MODE === 'development') 
 app.use(morgan('dev'));
 
+// Limit request from same API
 const limiter = rateLimit({
     max: 5,
     windowMs: 60 * 60 * 1000,
