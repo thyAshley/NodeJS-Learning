@@ -3,16 +3,32 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const AppError = require('./utils/appError');
+const mongoSanitize = require('express-mongo-sanitize')
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const app = express();
 
 // -- Global Middlewares --
 // Set secure HTTP headers
 app.use(helmet());
+
 // Body Parser, reading data from body to req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Service Statis Files
 app.use(express.static(`${__dirname}/public`));
 
+// Data sanitization against noSQL Query injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
+
+// HPP prevention middleware
+app.use(hpp());
+
+// Test Middleware
 app.use((req,res, next) => {
     req.requestTime = new Date().toISOString();
     next();
@@ -24,7 +40,7 @@ app.use(morgan('dev'));
 
 // Limit request from same API
 const limiter = rateLimit({
-    max: 5,
+    max: 50,
     windowMs: 60 * 60 * 1000,
     message: 'Too many requests from this IP, please try again in an hour'
 });
