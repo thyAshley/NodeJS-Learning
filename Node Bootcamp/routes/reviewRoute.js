@@ -5,7 +5,7 @@ const router = express.Router();
 const reviewController = require('../controllers/reviewController');
 
 const authController = require('../controllers/authenticationController');
-router.post('/', authController.protect, authController.restrictTo('user'), reviewController.addReview);
+router.post('/', authController.protect, authController.restrictTo('user'), reviewController.createReview);
 router.get('/', reviewController.getReview);
 
 module.exports = router;
