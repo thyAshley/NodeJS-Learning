@@ -10,13 +10,12 @@ function filterObj(obj, ...allowedFields) {
     })
     return newObj;
 }
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
-    res.status(200).json({
-        status: 'success',
-        users
-    })
-})
+
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+};
+
 
 exports.updateMe = catchAsync(async(req, res, next) => {
 
@@ -46,12 +45,9 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     
 })
 
-exports.getUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'Route is not yet implemented'
-    })
-}
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+exports.deleteUser = factory.deleteOne(User);
+
 // Do not update password with this
 exports.updateUser = factory.updateOne(User);
-exports.deleteUser = factory.deleteOne(User);

@@ -1,5 +1,6 @@
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const APIFeatures = require('../utils/apiFeatures');
 
 exports.deleteOne = Model => {
     return catchAsync(async (req, res, next) => {
@@ -37,4 +38,40 @@ exports.createOne = Model => {
             document
         })
     })
+}
+
+exports.getOne = (Model, popOption) => {
+    return catchAsync(async (req, res, next) => {
+        let query = Model.findByIdAndDelete(req.params.id);
+        if (popOption) query = query.populate(popOption);
+
+        const document = await query;
+        if (!document) return next(new AppError('No Tour found with that ID', 404));
+        res.status(200).json({
+            status: 'success', 
+            data: document
+        })
+    });
+}
+
+exports.getAll = Model => {
+    return catchAsync(async (req, res, next) => {
+        // execute query
+        let filter = {};
+        if (req.params.tourId) filter = { tour: req.params.tourId }
+
+        const features = new APIFeatures(Model.find(filter), req.query)
+        .filter()
+        .sort()
+        .limitField()
+        .paginate();
+        const document = await features.query;
+        // send response
+        res.status(200).json(
+            {
+                status: 'success',
+                results: document.length,
+                document
+            });
+    });
 }
