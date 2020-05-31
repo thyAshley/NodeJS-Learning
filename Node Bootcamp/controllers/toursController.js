@@ -8,6 +8,7 @@ const catchAsync = require('../utils/catchAsync');
 
 const AppError = require('../utils/appError');
 
+
 exports.aliasTopTours = (req, res, next) => {
     console.log('in middleware');
     req.query.limit = '5';
@@ -42,9 +43,10 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 
+
 exports.getTour = catchAsync(async (req, res, next) => {
     const id = req.params.id;
-    const tour = await Tour.findById(id);
+    const tour = await Tour.findById(id)
     if (!tour) return next(new AppError('No Tour found with that ID', 404));
     res.status(200).json({
         status: 'success', 

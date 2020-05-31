@@ -115,7 +115,7 @@ const tourSchema = new mongoose.Schema({
     guides: [
         { 
             type: mongoose.Schema.ObjectId,
-            ref: 'User'
+            ref: 'user'
         }
     ]
 }, {
@@ -139,6 +139,14 @@ tourSchema.post(/^find/, function(doc, next) {
     console.log(Date.now() - this.startQuery, 'milliseconds');
     next();
 });
+
+tourSchema.pre(/^find/, function(next) {
+    this.populate({
+            path: 'guides',
+            select: '-__v -passwordChangedAt -_id -role'
+        });
+    next();
+})
 
 // Aggregation Middleware
 tourSchema.pre('aggregate', function(next) {
