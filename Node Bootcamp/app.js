@@ -2,10 +2,16 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const AppError = require('./utils/appError');
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean');
 const hpp = require('hpp');
+
+const AppError = require('./utils/appError');
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoute');
+const globalErrorHandler = require('./controllers/errorController')
+
 
 const app = express();
 
@@ -49,13 +55,11 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
-const globalErrorHandler = require('./controllers/errorController')
 
 // -- Routes --
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/review', reviewRouter);
 
 app.all('*', (req, res, next) => {
     const err = new AppError(`Can't find ${req.url} on this server`, 404);
