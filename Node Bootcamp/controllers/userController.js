@@ -1,5 +1,5 @@
 const User = require('../models/userModel');
-
+const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -63,9 +63,5 @@ exports.updateUser = (req, res) => {
         message: 'Route is not yet implemented'
     })
 }
-exports.deleteUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'Route is not yet implemented'
-    })
-}
+
+exports.deleteUser = factory.deleteOne(User);
