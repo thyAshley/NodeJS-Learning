@@ -20,13 +20,15 @@ const createSendToken = (user, statusCode, token, res) => {
     if (process.env.MODE === 'production') cookieOptions.secure = true;
 
     user.password = undefined;
+    res.cookie('jwt', token, cookieOptions)
     res.status(statusCode).json({
         status: 'success',
         token: token,
         data: {
             user: user
         }
-    }).cookie('jwt', token, cookieOptions);
+    });
+    
 }
 
 exports.signup = catchAsync(async (req, res, next) => {
@@ -45,7 +47,7 @@ exports.login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
     // 1) check email and password exist
     if (!(email && password)) {
-        next(new AppError('Please provide email and password',400))
+        return next(new AppError('Please provide email and password',400))
     }
     // 2) check if user exist and password is correct
     const user = await User.findOne({email: email}).select('password');

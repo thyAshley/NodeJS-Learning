@@ -45,23 +45,13 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     })
     
 })
-exports.createUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'Route is not yet implemented'
-    })
-}
+
 exports.getUser = (req, res) => {
     res.status(500).json({
         status: 'error',
         message: 'Route is not yet implemented'
     })
 }
-exports.updateUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'Route is not yet implemented'
-    })
-}
-
+// Do not update password with this
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
