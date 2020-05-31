@@ -42,10 +42,10 @@ exports.createOne = Model => {
 
 exports.getOne = (Model, popOption) => {
     return catchAsync(async (req, res, next) => {
-        let query = Model.findByIdAndDelete(req.params.id);
+        let query = Model.findById(req.params.id);
         if (popOption) query = query.populate(popOption);
 
-        const document = await query;
+        const document = await query.select('-password');
         if (!document) return next(new AppError('No Tour found with that ID', 404));
         res.status(200).json({
             status: 'success', 
