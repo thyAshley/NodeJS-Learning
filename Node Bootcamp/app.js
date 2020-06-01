@@ -11,9 +11,14 @@ const tourRouter = require('./routes/tourRoutes');
 
 const reviewRouter = require('./routes/reviewRoute');
 const globalErrorHandler = require('./controllers/errorController')
-
-
+const path = require('path');
 const app = express();
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// Service Statis Files
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // -- Global Middlewares --
 // Set secure HTTP headers
@@ -21,9 +26,6 @@ app.use(helmet());
 
 // Body Parser, reading data from body to req.body
 app.use(express.json({ limit: '10kb' }));
-
-// Service Statis Files
-app.use(express.static(`${__dirname}/public`));
 
 // Data sanitization against noSQL Query injection
 app.use(mongoSanitize());
@@ -57,6 +59,13 @@ app.use('/api', limiter);
 
 
 // -- Routes --
+app.get('/', (req, res) => {
+    res.status(200).render('base.pug', {
+        tour: 'Forest Hiker',
+        user: 'Josh'
+    });
+})
+
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/review', reviewRouter);
