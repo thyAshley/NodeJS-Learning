@@ -46,7 +46,7 @@ exports.getOne = (Model, popOption) => {
         if (popOption) query = query.populate(popOption);
 
         const document = await query.select('-password');
-        if (!document) return next(new AppError('No Tour found with that ID', 404));
+        if (!document) return next(new AppError('No document found with that ID', 404));
         res.status(200).json({
             status: 'success', 
             data: document
