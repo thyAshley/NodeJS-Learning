@@ -17,7 +17,7 @@ router.route('/tour-stats')
 router.route('/tours-within/:distance/center/:latlon/unit/:unit')
 .get(tourController.getToursWithin);
 
-router.route('/distances/:latlon/unit')
+router.route('/distances/:latlon/unit/:unit')
 .get(tourController.getDistances);
 router.route('/')
 .get(tourController.getAllTours)
