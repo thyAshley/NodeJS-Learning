@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize')
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
+const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 
 const tourRouter = require('./routes/tourRoutes');
@@ -16,6 +16,7 @@ const viewRouter = require('./routes/viewRoutes');
 const globalErrorHandler = require('./controllers/errorController')
 const path = require('path');
 const app = express();
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -29,7 +30,7 @@ app.use(helmet());
 
 // Body Parser, reading data from body to req.body
 app.use(express.json({ limit: '10kb' }));
-
+app.use(cookieParser())
 // Data sanitization against noSQL Query injection
 app.use(mongoSanitize());
 
