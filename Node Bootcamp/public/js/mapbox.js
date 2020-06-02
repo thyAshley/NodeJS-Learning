@@ -5,11 +5,11 @@ const locations = JSON.parse(document.getElementById('map').dataset.locations);
 mapboxgl.accessToken = 'pk.eyJ1IjoidGh5YXNobGV5IiwiYSI6ImNrYXhudmE5aTA4MGQyeG8ydjF4ZnZyMGsifQ.8TD3kw_rep4-3I66Iw9MRA';
 
 var map = new mapboxgl.Map({
-container: 'map',
-style: 'mapbox://styles/thyashley/ckaxnz9a30su11illhdqc5n69'
-
-// center: [-118.113491, 34.111745],
-// zoom: 12
+    container: 'map',
+    style: 'mapbox://styles/thyashley/ckaxnz9a30su11illhdqc5n69',
+    scrollZoom: false
+    // center: [-118.113491, 34.111745],
+    // zoom: 12
 });
 
 
@@ -26,15 +26,17 @@ locations.forEach(loc => {
     }).setLngLat(loc.coordinates).addTo(map);
 
     //Add Popup
-    new mapboxgl.Popup().setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`).addTo(map);
+    new mapboxgl.Popup({
+        offset: 30
+    }).setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`).addTo(map);
     // Extend map bounds to include current location
     bounds.extend(loc.coordinates)
 })
 
 map.fitBounds(bounds, {
     padding: {
-        top: 200,
-        bottom: 200,
+        top: 150,
+        bottom: 150,
         left: 100,
         right: 100
     }
