@@ -17,7 +17,7 @@ const createSendToken = (user, statusCode, token, res) => {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true
     };
-    if (process.env.MODE === 'production') cookieOptions.secure = true;
+    // cookieOptions.secure = true;
 
     user.password = undefined;
     res.cookie('jwt', token, cookieOptions)
@@ -59,6 +59,16 @@ exports.login = catchAsync(async (req, res, next) => {
 
     createSendToken(user, 200, createToken(user._id) ,res)
 })
+
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + (10 * 1000)),
+        httpOnly: true
+    });
+    res.status(200).json({
+        status: 'success'
+    })
+}
 
 exports.protect = catchAsync(async (req, res, next) => {
     // 1) Getting token and check 
@@ -173,22 +183,24 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 })
 
 
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
     // 1) Getting token and check 
     let token = req.cookies.jwt;
+    try {
+        if (token) {
 
-    if (token) {
+            const payload = await jwt.verify(token, process.env.JWT_SECRET)
 
-        const payload = await jwt.verify(token, process.env.JWT_SECRET)
+            const currentUser = await User.findById(payload.id);
 
-        const currentUser = await User.findById(payload.id);
+            if (!currentUser) return next();
+            if (currentUser.changePassword(payload.iat)) return next();
 
-        if (!currentUser) return next();
-        if (currentUser.changePassword(payload.iat)) return next();
-
-        res.locals.user = currentUser;
-        return next(); 
+            res.locals.user = currentUser;
+            return next(); 
+        }
+    } catch (err) {
+        return next();
     }
-    console.log('nope');
     next();
-})
+};
