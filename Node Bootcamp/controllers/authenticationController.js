@@ -92,6 +92,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     if (user.changePassword(payload.iat)) return next(new AppError('User recently changed password. Please re-log', 401));
 
     req.user = user;
+    res.locals.user = user;
     // give access
     next();
 })
@@ -167,11 +168,12 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
     // 1) Get user from collection,
+    console.log(req.body);
     const user = await User.findById(req.user.id).select('password');
     const checkPassword = await user.correctPassword(req.body.password, user.password);
 
     if (!checkPassword) return next(new AppError('Your current password is wrong'), 401);
-    if (!(req.body.password === req.body.passwordConfirm)) return next(new AppError('Password does not match', 400));
+    if (!(req.body.newPassword === req.body.passwordConfirm)) return next(new AppError('Password does not match', 400));
     
     // 3) if password is correct, update password
     user.password = req.body.newPassword;
@@ -186,21 +188,17 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 exports.isLoggedIn = async (req, res, next) => {
     // 1) Getting token and check 
     let token = req.cookies.jwt;
-    try {
-        if (token) {
+    if (token && (token !== 'loggedout')) {
 
-            const payload = await jwt.verify(token, process.env.JWT_SECRET)
+        const payload = await jwt.verify(token, process.env.JWT_SECRET)
 
-            const currentUser = await User.findById(payload.id);
+        const currentUser = await User.findById(payload.id);
 
-            if (!currentUser) return next();
-            if (currentUser.changePassword(payload.iat)) return next();
+        if (!currentUser) return next();
+        if (currentUser.changePassword(payload.iat)) return next();
 
-            res.locals.user = currentUser;
-            return next(); 
-        }
-    } catch (err) {
-        return next();
+        res.locals.user = currentUser;
+        return next(); 
     }
     next();
 };
