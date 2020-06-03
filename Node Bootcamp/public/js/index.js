@@ -1,6 +1,6 @@
 import { login, logout } from './login';
 import '@babel/polyfill';
-// import { displayMap } from './mapbox';
+import { displayMap } from './mapbox';
 
 const mapBox = document.getElementById('map');
 const form = document.querySelector('.form');

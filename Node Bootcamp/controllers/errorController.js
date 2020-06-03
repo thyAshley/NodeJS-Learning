@@ -40,30 +40,27 @@ const sendErrorDev = (err, req, res) => {
 const sendErrorProd = (err, req, res) => {
     if (req.originalUrl.startsWith('/api')) {
         if (err.isOperational) {
-            res.status(err.statusCode).render('error', {
+            return res.status(err.statusCode).render('error', {
                 title: 'Something went wrong!',
                 msg: err.message
             })
-        } else {
-            console.error('ERROR 🤦‍♂️🤦‍', err);
-            res.status(500).render('error', {
-                title: 'Something Went Wrong!',
-                msg: 'Please try again later.'
-            })
         }
-    }
-    if (err.isOperational) {
-        res.status(err.statusCode).render('error', {
-            title: 'Something went wrong!',
-            msg: err.message
-        })
-    } else {
-        console.error('ERROR 🤦‍♂️🤦‍', err);
-        res.status(500).render('error', {
+        return res.status(500).render('error', {
             title: 'Something Went Wrong!',
             msg: 'Please try again later.'
         })
-    }    
+    }
+    
+    if (err.isOperational) {
+        return res.status(err.statusCode).render('error', {
+            title: 'Something went wrong!',
+            msg: err.message
+        })
+    }
+        return res.status(500).render('error', {
+            title: 'Something Went Wrong!',
+            msg: 'Please try again later.'
+        })
 }
 
 exports.getError = (err, req, res, next) => {
@@ -75,6 +72,7 @@ exports.getError = (err, req, res, next) => {
     }
     else {
         let error = {...err};
+        error.message = err.message
         if (error.name === 'CastError') error = handleCastErrorDB(error)
         if (error.code === 11000) error = handleDuplicateFieldsDB(error)
         if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
