@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const pug = require('pug')
+const htmlToText = require('html-to-text');
 
 module.exports = class Email {
   constructor(user, url) {
@@ -13,7 +15,7 @@ module.exports = class Email {
       // Sendgrid
       return 1
     } else {
-        const transporter = nodemailer.createTransport({
+        return transporter = nodemailer.createTransport({
           host: process.env.EMAIL_HOST,
           port: process.env.EMAIL_PORT,
           auth: {
@@ -24,17 +26,27 @@ module.exports = class Email {
     }
   }
 
-  send(template, subject) {
+  async send(template, subject) {
+
+    // 1) Render HTML
+    const html = pug.renderFile(`${__dirname}/../views/emails/${template}.pug`, {
+      firstName: this.firstName,
+      url: this.url,
+      subject: subject
+    });
+
     const mailOption = {
-      from: 'Dev-Team <dev@natours.io>',
-      to: options.email,
+      from: this.from,
+      to: this.to,
       subject: subject,
-      text: options.message
-    }
-      await transporter.sendMail(mailOption);
+      html: html,
+      text: htmlToText.fromString(html)
+    };
+
+    await this.createTransport().sendMail(mailOption);
   }
 
-  sendWelcome() {
-    this.send('Welcome', 'Welcome to the Natours Family!')
+  async sendWelcome() {
+    await this.send('welcome', 'Welcome to the Natours Family!')
   }
 }
