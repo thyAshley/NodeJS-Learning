@@ -8442,15 +8442,14 @@ var logout = /*#__PURE__*/function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            console.log('clicked');
-            _context2.prev = 1;
-            _context2.next = 4;
+            _context2.prev = 0;
+            _context2.next = 3;
             return (0, _axios.default)({
               method: 'get',
               url: 'http://localhost:3000/api/v1/users/logout'
             });
 
-          case 4:
+          case 3:
             res = _context2.sent;
 
             if (res.data.status === 'success') {
@@ -8460,20 +8459,20 @@ var logout = /*#__PURE__*/function () {
               }, 1500);
             }
 
-            _context2.next = 11;
+            _context2.next = 10;
             break;
 
-          case 8:
-            _context2.prev = 8;
-            _context2.t0 = _context2["catch"](1);
+          case 7:
+            _context2.prev = 7;
+            _context2.t0 = _context2["catch"](0);
             (0, _alert.showAlert)('error', 'Error logging out');
 
-          case 11:
+          case 10:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[1, 8]]);
+    }, _callee2, null, [[0, 7]]);
   }));
 
   return function logout() {
@@ -8547,27 +8546,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var updateSettings = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, type) {
-    var url, res, _res;
+    var res, _res;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            url = type === password ? 'updatePassword' : 'updateMe';
-
             if (!(type === 'data')) {
-              _context.next = 12;
+              _context.next = 11;
               break;
             }
 
-            _context.prev = 2;
-            _context.next = 5;
-            return _axios.default.patch("http://localhost:3000/api/v1/users/updateMe", {
-              name: data.name,
-              email: data.email
+            _context.prev = 1;
+            _context.next = 4;
+            return (0, _axios.default)({
+              method: 'PATCH',
+              url: 'http://localhost:3000/api/v1/users/updateMe',
+              data: data
             });
 
-          case 5:
+          case 4:
             res = _context.sent;
 
             if (res.data.status === 'success') {
@@ -8577,29 +8575,29 @@ var updateSettings = /*#__PURE__*/function () {
               }, 1000);
             }
 
-            _context.next = 12;
+            _context.next = 11;
             break;
 
-          case 9:
-            _context.prev = 9;
-            _context.t0 = _context["catch"](2);
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](1);
             (0, _alert.showAlert)('error', _context.t0.response.data.message);
 
-          case 12:
+          case 11:
             if (!(type === 'password')) {
-              _context.next = 23;
+              _context.next = 22;
               break;
             }
 
-            _context.prev = 13;
-            _context.next = 16;
+            _context.prev = 12;
+            _context.next = 15;
             return _axios.default.patch("http://localhost:3000/api/v1/users/updatePassword", {
               password: data.password,
               newPassword: data.newPassword,
               passwordConfirm: data.passwordConfirm
             });
 
-          case 16:
+          case 15:
             _res = _context.sent;
 
             if (_res.data.status === 'success') {
@@ -8609,20 +8607,20 @@ var updateSettings = /*#__PURE__*/function () {
               }, 1000);
             }
 
-            _context.next = 23;
+            _context.next = 22;
             break;
 
-          case 20:
-            _context.prev = 20;
-            _context.t1 = _context["catch"](13);
+          case 19:
+            _context.prev = 19;
+            _context.t1 = _context["catch"](12);
             (0, _alert.showAlert)('error', _context.t1.response.data.message);
 
-          case 23:
+          case 22:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[2, 9], [13, 20]]);
+    }, _callee, null, [[1, 8], [12, 19]]);
   }));
 
   return function updateSettings(_x, _x2) {
@@ -8927,12 +8925,13 @@ if (logoutBtn) {
 if (settingform) {
   settingform.addEventListener('submit', function (e) {
     e.preventDefault();
+    var formdata = new FormData();
     var email = document.querySelector('#email').value;
     var name = document.querySelector('#name').value;
-    (0, _updateSettings.updateSettings)({
-      name: name,
-      email: email
-    }, 'data');
+    formdata.append('name', name);
+    formdata.append('email', email);
+    formdata.append('photo', document.getElementById('photo').files[0]);
+    (0, _updateSettings.updateSettings)(formdata, 'data');
   });
 }
 
@@ -9003,7 +9002,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51526" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56265" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -30,9 +30,13 @@ if (logoutBtn) {
 if (settingform) {
     settingform.addEventListener('submit', e => {
         e.preventDefault();
+        const formdata = new FormData();
         const email = document.querySelector('#email').value;
         const name = document.querySelector('#name').value;
-        updateSettings({name: name, email: email}, 'data');
+        formdata.append('name', name);
+        formdata.append('email', email);
+        formdata.append('photo', document.getElementById('photo').files[0])
+        updateSettings(formdata, 'data');
     })
 }
 
