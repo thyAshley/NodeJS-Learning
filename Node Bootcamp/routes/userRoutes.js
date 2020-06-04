@@ -16,7 +16,7 @@ router.patch('/resetPassword/:resetToken', authController.resetPassword);
 router.use(authController.protect)
 
 router.patch('/updatePassword',  authController.updatePassword);
-router.patch('/updateMe', userController.updateMe);
+router.patch('/updateMe', userController.uploadUserPhoto, userController.resizeUserPhoto, userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 // restrict to admin after this row
