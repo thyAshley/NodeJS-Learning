@@ -15,7 +15,7 @@ module.exports = class Email {
       // Sendgrid
       return 1
     } else {
-        return transporter = nodemailer.createTransport({
+        return nodemailer.createTransport({
           host: process.env.EMAIL_HOST,
           port: process.env.EMAIL_PORT,
           auth: {
@@ -29,7 +29,7 @@ module.exports = class Email {
   async send(template, subject) {
 
     // 1) Render HTML
-    const html = pug.renderFile(`${__dirname}/../views/emails/${template}.pug`, {
+    const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
       subject: subject
