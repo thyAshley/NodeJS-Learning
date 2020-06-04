@@ -4,7 +4,6 @@ const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 exports.aliasTopTours = (req, res, next) => {
-    console.log('in middleware');
     req.query.limit = '5';
     req.query.sort = '-ratingAverage,price';
     req.query.fields='name,price,ratingAverage,difficulty';
@@ -99,7 +98,6 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
         startLocation: { $geoWithin: { $centerSphere: [[lon, lat], radius] } }
     })
 
-    console.log(distance, lat, lon, unit);
     res.status(200).json({
         status: 'success',
         results: tours.length,

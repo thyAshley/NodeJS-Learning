@@ -67,7 +67,6 @@ exports.getError = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
     if (process.env.MODE === 'development') {
-        console.log(err)
         sendErrorDev(err, req, res);
     }
     else {
