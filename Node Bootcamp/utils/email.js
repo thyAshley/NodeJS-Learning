@@ -7,13 +7,18 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Dev-Team <${process.env.EMAIL_FROM}>`;
+    this.from = `Ash <papereater2002@gmail.com>`;
   }
-
   createTransport() {
     if (process.env.MODE === 'production') {
-      // Sendgrid
-      return 1
+      return nodemailer.createTransport({
+        host: 'smtp.sendgrid.net',
+        port: 25,
+        auth: {
+          user: process.env.SENDGRID_USERNAME,
+          pass: process.env.SENDGRID_PASSWORD
+        }
+      })
     } else {
         return nodemailer.createTransport({
           host: process.env.EMAIL_HOST,
@@ -42,11 +47,26 @@ module.exports = class Email {
       html: html,
       text: htmlToText.fromString(html)
     };
-
+    
+    console.log(this.to)
     await this.createTransport().sendMail(mailOption);
   }
 
   async sendWelcome() {
-    await this.send('welcome', 'Welcome to the Natours Family!')
+    try {
+      await this.send('welcome', 'Welcome to the Natours Family!')
+      console.log('email sent');
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  
+  async sendPasswordReset(){
+    try {
+      await this.send('passwordReset', 'Your password reset token (valid for only 10 minutes)');
+    } catch (err) {
+      console.log(err.message);
+    }
   }
 }
