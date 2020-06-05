@@ -151,11 +151,6 @@ tourSchema.pre(/^find/, function(next) {
     next();
 });
 
-tourSchema.post(/^find/, function(doc, next) {
-    console.log(Date.now() - this.startQuery, 'milliseconds');
-    next();
-});
-
 tourSchema.pre(/^find/, function(next) {
     this.populate({
             path: 'guides',
@@ -164,25 +159,11 @@ tourSchema.pre(/^find/, function(next) {
     next();
 })
 
-// Aggregation Middleware
-// tourSchema.pre('aggregate', function(next) {
-//     this.pipeline().unshift({ '$match': { secretTour: { $ne: true } } })
-//     console.log(this.pipeline());
-//     next();
-// });
-
 // Document Middleware
 tourSchema.pre('save', function(next) {
     this.slug = slugify(this.name, { lower: true });
     next();
 });
-
-// tourSchema.pre('save', async function(next) {
-//     const guidesPromises = this.guides.map(async id => {
-//         return await User.findById(id);
-//     })
-//     this.guides = await Promise.all(guidesPromises);
-// })
 
 const Tour = mongoose.model('Tour', schema=tourSchema);
 

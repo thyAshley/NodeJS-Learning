@@ -6,7 +6,7 @@ export const updateSettings = async (data, type) => {
         try {
             const res = await axios({
                 method: 'PATCH',
-                url: 'http://localhost:3000/api/v1/users/updateMe',
+                url: '/api/v1/users/updateMe',
                 data
             })
             if (res.data.status === 'success') {
@@ -21,7 +21,7 @@ export const updateSettings = async (data, type) => {
     }
     if (type === 'password') {
         try {
-            const res = await axios.patch(`http://localhost:3000/api/v1/users/updatePassword`, {
+            const res = await axios.patch(`/api/v1/users/updatePassword`, {
                 password: data.password,
                 newPassword: data.newPassword,
                 passwordConfirm: data.passwordConfirm

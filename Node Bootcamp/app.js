@@ -7,6 +7,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
+const compression = require('compression');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -43,6 +44,8 @@ app.use(xss());
 app.use(hpp({
     whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'difficulty', 'price', 'maxGroupSize']
 }));
+// compress all the text to client
+app.use(compression());
 
 // Test Middleware
 app.use((req,res, next) => {
