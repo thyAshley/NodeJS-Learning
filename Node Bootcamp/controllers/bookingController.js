@@ -1,6 +1,7 @@
 const Tour = require('../models/tourModel');
+const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
-const factory = require('../controllers/handlerFactory');
+const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -29,3 +30,39 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
         session
     })
 })
+
+exports.createBookingCheckout = catchAsync( async(req, res, next) => {
+    const {tour, user, price} = req.query;
+
+    if (!tour || !user || !price) return next();
+
+    await Booking.create({
+        tour,
+        user,
+        price
+    });
+
+    res.redirect(req.originalUrl.split('?')[0]);
+})
+
+exports.getMyTours = catchAsync( async(req, res, next) => {
+    // 1) Find all bookings,
+    const booking = await Booking.find({user: req.user._id});
+    const tourID = booking.map(el => {
+        return el.tour.id
+    })
+
+    const tours = await Tour.find({_id: { $in: tourID } })
+
+    res.status(200).render('overview', {
+        title: 'My Tours',
+        tours
+
+    })
+})
+
+exports.createBooking = factory.createOne(Booking);
+exports.getBooking = factory.getOne(Booking);
+exports.getAllBooking = factory.getAll(Booking);
+exports.updateBooking = factory.updateOne(Booking);
+exports.deleteBooking = factory.deleteOne(Booking);
