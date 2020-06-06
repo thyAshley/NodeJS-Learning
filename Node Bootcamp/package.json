@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "start": "node server.js",
     "debug": "ndb server.js",
@@ -17,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-mongo-sanitize": "^2.0.0",
@@ -38,8 +42,5 @@
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
-  },
-  "engine": {
-    "node": ">=12.x"
   }
 }

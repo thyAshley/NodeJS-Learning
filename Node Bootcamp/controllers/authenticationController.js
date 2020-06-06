@@ -12,12 +12,12 @@ const createToken = (userid) => {
     })
 }
 
-const createSendToken = (user, statusCode, token, res) => {
+const createSendToken = (user, statusCode, token, req, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly: true
+        httpOnly: true,
+        secure: req.secure || req.header['x-forwarded-proto'] === 'https'
     };
-    // cookieOptions.secure = true;
 
     user.password = undefined;
     res.cookie('jwt', token, cookieOptions)
@@ -40,12 +40,13 @@ exports.signup = catchAsync(async (req, res, next) => {
     });
     const url = `${req.protocol}://${req.get('host')}/me`;
     await new Email(newUser, url).sendWelcome();
-    createSendToken(newUser, 201, createToken(newUser._id) ,res)
+    createSendToken(newUser, 201, createToken(newUser._id) , req, res)
 
 });
 
 exports.login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
+    console.log(req.body);
     // 1) check email and password exist
     if (!(email && password)) {
         return next(new AppError('Please provide email and password',400))
@@ -58,7 +59,7 @@ exports.login = catchAsync(async (req, res, next) => {
         return next(new AppError('Incorrect Credentials', 401))
         }
 
-    createSendToken(user, 200, createToken(user._id) ,res)
+    createSendToken(user, 200, createToken(user._id) , req, res)
 })
 
 exports.logout = (req, res) => {
@@ -157,7 +158,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     // 3) update changedPasswordAt property for the user
 
     // 4) Log the user in, send JWT
-    createSendToken(user, 200, createToken(user._id) ,res)
+    createSendToken(user, 200, createToken(user._id) ,req, res)
 })
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -174,7 +175,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     await user.save();
 
     // 4) log user in again
-    createSendToken(user, 200, createToken(user._id) ,res)
+    createSendToken(user, 200, createToken(user._id) ,req, res)
 })
 
 

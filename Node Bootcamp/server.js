@@ -24,6 +24,13 @@ process.on('uncaughtException', err => {
     });
 });
 
+process.on('SIGTERM', () => {
+    console.log('SIGTERM Received, Shutting Down 😘😘');
+    server.close(() => {
+        console.log('Process Terminated');
+    });
+})
+
 // -- Connect to MongoDB atlas
 mongoose.connect(DB, 
     {
